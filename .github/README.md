@@ -27,11 +27,11 @@
 <details> 
   <summary>Installation of my mods</summary>
 
-  I would recommend installing the @end_4 dotfiles (updated) and using the script to replace some files that give it the appearance I have configured. However, this may stop working over time, so you can also (without the above script) download my complete dotfiles for full compatibility between files.   
+I would recommend installing the @end_4 dotfiles (updated) and using the script to replace some files that give it the appearance I have configured. However, this may stop working over time, so you can also (without the above script) download my complete dotfiles for full compatibility between files.   
 
-    ```bash
-    curl -s "[https://raw.githubusercontent.com/chewwallwa/dots-hyprland/all-my-mods/chewwallwa-mods.sh](https://raw.githubusercontent.com/chewwallwa/dots-hyprland/all-my-mods/chewwallwa-mods.sh)" | bash
-    ```bash
+```bash
+curl -s "[https://raw.githubusercontent.com/chewwallwa/dots-hyprland/all-my-mods/chewwallwa-mods.sh](https://raw.githubusercontent.com/chewwallwa/dots-hyprland/all-my-mods/chewwallwa-mods.sh)" | bash
+```
 
 My submap keybinds:
 
