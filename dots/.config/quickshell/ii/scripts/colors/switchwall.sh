@@ -301,43 +301,46 @@ switch() {
     
     # Override background color in colors.json and GTK/Qt files for light mode if custom color is set
     if [[ "$mode_flag" == "light" && -n "$light_bg_color" && "$light_bg_color" != "null" ]]; then
-        echo "[switchwall.sh] Applying custom light mode background color: $light_bg_color" >&2
-        
-        # Override colors.json for QuickShell UI
-        # Do this atomically to avoid race conditions with file watchers
-        colors_json="$STATE_DIR/user/generated/colors.json"
-        if [ -f "$colors_json" ]; then
-            echo "[switchwall.sh] Updating colors.json..." >&2
-            # Create a complete copy with the override, then atomically replace
-            if jq --arg color "$light_bg_color" '.background = $color' "$colors_json" > "$colors_json.new"; then
-                # Atomic move to replace the file
-                mv -f "$colors_json.new" "$colors_json" || echo "[switchwall.sh] Error: Failed to move temporary file" >&2
-                # Ensure file is fully written
-                sync "$colors_json" 2>/dev/null || true
-            else
-                echo "[switchwall.sh] Error: jq command failed" >&2
-                rm -f "$colors_json.new" 2>/dev/null
-            fi
+        # Validate the color format before applying
+        if [[ ! "$light_bg_color" =~ ^#[0-9A-Fa-f]{6}$ ]]; then
+            echo "[switchwall.sh] Warning: Invalid color format '$light_bg_color', skipping override" >&2
         else
-            echo "[switchwall.sh] Warning: colors.json not found at $colors_json" >&2
-        fi
-        
-        # Override GTK-3.0 CSS
-        gtk3_css="$XDG_CONFIG_HOME/gtk-3.0/gtk.css"
-        if [ -f "$gtk3_css" ]; then
-            echo "[switchwall.sh] Updating GTK-3.0 colors..." >&2
-            # Replace window_bg_color with custom color
-            sed -i "s/@define-color window_bg_color #[0-9A-Fa-f]\{6\};/@define-color window_bg_color $light_bg_color;/g" "$gtk3_css"
-            sed -i "s/@define-color sidebar_bg_color @window_bg_color;/@define-color sidebar_bg_color $light_bg_color;/g" "$gtk3_css"
-        fi
-        
-        # Override GTK-4.0 CSS
-        gtk4_css="$XDG_CONFIG_HOME/gtk-4.0/gtk.css"
-        if [ -f "$gtk4_css" ]; then
-            echo "[switchwall.sh] Updating GTK-4.0 colors..." >&2
-            # Replace window_bg_color with custom color
-            sed -i "s/@define-color window_bg_color #[0-9A-Fa-f]\{6\};/@define-color window_bg_color $light_bg_color;/g" "$gtk4_css"
-            sed -i "s/@define-color sidebar_bg_color @window_bg_color;/@define-color sidebar_bg_color $light_bg_color;/g" "$gtk4_css"
+            echo "[switchwall.sh] Applying custom light mode background color: $light_bg_color" >&2
+            
+            # Override colors.json for QuickShell UI
+            # Do this atomically to avoid race conditions with file watchers
+            colors_json="$STATE_DIR/user/generated/colors.json"
+            if [ -f "$colors_json" ]; then
+                echo "[switchwall.sh] Updating colors.json..." >&2
+                # Create a complete copy with the override, then atomically replace
+                if jq --arg color "$light_bg_color" '.background = $color' "$colors_json" > "$colors_json.new"; then
+                    # Atomic move to replace the file
+                    mv -f "$colors_json.new" "$colors_json" || echo "[switchwall.sh] Error: Failed to move temporary file" >&2
+                else
+                    echo "[switchwall.sh] Error: jq command failed" >&2
+                    rm -f "$colors_json.new" 2>/dev/null
+                fi
+            else
+                echo "[switchwall.sh] Warning: colors.json not found at $colors_json" >&2
+            fi
+            
+            # Override GTK-3.0 CSS
+            gtk3_css="$XDG_CONFIG_HOME/gtk-3.0/gtk.css"
+            if [ -f "$gtk3_css" ]; then
+                echo "[switchwall.sh] Updating GTK-3.0 colors..." >&2
+                # Escape special characters for sed and replace window_bg_color with custom color
+                escaped_color=$(printf '%s\n' "$light_bg_color" | sed 's/[[\.*^$/]/\\&/g')
+                sed -i "s/@define-color window_bg_color #[0-9A-Fa-f]\{6\};/@define-color window_bg_color ${escaped_color};/g" "$gtk3_css"
+            fi
+            
+            # Override GTK-4.0 CSS
+            gtk4_css="$XDG_CONFIG_HOME/gtk-4.0/gtk.css"
+            if [ -f "$gtk4_css" ]; then
+                echo "[switchwall.sh] Updating GTK-4.0 colors..." >&2
+                # Escape special characters for sed and replace window_bg_color with custom color
+                escaped_color=$(printf '%s\n' "$light_bg_color" | sed 's/[[\.*^$/]/\\&/g')
+                sed -i "s/@define-color window_bg_color #[0-9A-Fa-f]\{6\};/@define-color window_bg_color ${escaped_color};/g" "$gtk4_css"
+            fi
         fi
     fi
     
