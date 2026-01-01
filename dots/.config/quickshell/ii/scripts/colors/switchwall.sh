@@ -290,9 +290,11 @@ switch() {
         harmony=$(jq -r '.appearance.wallpaperTheming.terminalGenerationProps.harmony' "$SHELL_CONFIG_FILE")
         harmonize_threshold=$(jq -r '.appearance.wallpaperTheming.terminalGenerationProps.harmonizeThreshold' "$SHELL_CONFIG_FILE")
         term_fg_boost=$(jq -r '.appearance.wallpaperTheming.terminalGenerationProps.termFgBoost' "$SHELL_CONFIG_FILE")
+        light_bg_color=$(jq -r '.appearance.palette.lightBackgroundColor' "$SHELL_CONFIG_FILE")
         [[ "$harmony" != "null" && -n "$harmony" ]] && generate_colors_material_args+=(--harmony "$harmony")
         [[ "$harmonize_threshold" != "null" && -n "$harmonize_threshold" ]] && generate_colors_material_args+=(--harmonize_threshold "$harmonize_threshold")
         [[ "$term_fg_boost" != "null" && -n "$term_fg_boost" ]] && generate_colors_material_args+=(--term_fg_boost "$term_fg_boost")
+        [[ "$light_bg_color" != "null" && -n "$light_bg_color" ]] && generate_colors_material_args+=(--light_bg_color "$light_bg_color")
     fi
 
     matugen "${matugen_args[@]}"

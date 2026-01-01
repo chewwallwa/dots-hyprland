@@ -218,6 +218,76 @@ ContentPage {
             ]
         }
 
+        ContentSubsection {
+            title: Translation.tr("Light mode background")
+            tooltip: Translation.tr("Custom background color for light mode")
+
+            Process {
+                id: colorPickerProc
+                command: ["hyprpicker", "--no-fancy"]
+                running: false
+                stdout: SplitParser {
+                    onRead: data => {
+                        var color = data.trim();
+                        if (color.match(/^#[0-9A-Fa-f]{6}$/)) {
+                            lightBgColorField.text = color;
+                        }
+                    }
+                }
+            }
+
+            RowLayout {
+                spacing: 10
+                Layout.fillWidth: true
+
+                MaterialTextField {
+                    id: lightBgColorField
+                    Layout.fillWidth: true
+                    placeholderText: Translation.tr("Hex color (e.g., #F2E5BC)")
+                    text: Config.options.appearance.palette.lightBackgroundColor
+                    onTextChanged: {
+                        // Validate hex color format
+                        if (text.match(/^#[0-9A-Fa-f]{6}$/)) {
+                            Config.options.appearance.palette.lightBackgroundColor = text;
+                        }
+                    }
+                }
+
+                Rectangle {
+                    width: 40
+                    height: 40
+                    radius: Appearance.rounding.small
+                    color: Config.options.appearance.palette.lightBackgroundColor
+                    border.width: 1
+                    border.color: Appearance.colors.colOutline
+                }
+
+                RippleButtonWithIcon {
+                    buttonRadius: Appearance.rounding.small
+                    materialIcon: "colorize"
+                    mainText: Translation.tr("Pick")
+                    onClicked: {
+                        colorPickerProc.running = true;
+                    }
+                    StyledToolTip {
+                        text: Translation.tr("Use color picker")
+                    }
+                }
+
+                RippleButtonWithIcon {
+                    buttonRadius: Appearance.rounding.small
+                    materialIcon: "refresh"
+                    mainText: Translation.tr("Apply")
+                    onClicked: {
+                        Quickshell.execDetached(["bash", "-c", `${Directories.wallpaperSwitchScriptPath} --noswitch`]);
+                    }
+                    StyledToolTip {
+                        text: Translation.tr("Reapply colors with new background")
+                    }
+                }
+            }
+        }
+
         ConfigSwitch {
             buttonIcon: "ev_shadow"
             text: Translation.tr("Transparency")
