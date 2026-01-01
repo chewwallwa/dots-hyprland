@@ -298,6 +298,19 @@ switch() {
     fi
 
     matugen "${matugen_args[@]}"
+    
+    # Override background color in colors.json for light mode if custom color is set
+    if [[ "$mode_flag" == "light" && -n "$light_bg_color" && "$light_bg_color" != "null" ]]; then
+        colors_json="$STATE_DIR/user/generated/colors.json"
+        if [ -f "$colors_json" ]; then
+            echo "[switchwall.sh] Overriding light mode background color to: $light_bg_color" >&2
+            # Use jq to update the background color in the generated colors.json
+            jq --arg color "$light_bg_color" '.background = $color' "$colors_json" > "$colors_json.tmp" && mv "$colors_json.tmp" "$colors_json"
+        else
+            echo "[switchwall.sh] Warning: colors.json not found at $colors_json" >&2
+        fi
+    fi
+    
     source "$(eval echo $ILLOGICAL_IMPULSE_VIRTUAL_ENV)/bin/activate"
     python3 "$SCRIPT_DIR/generate_colors_material.py" "${generate_colors_material_args[@]}" \
         > "$STATE_DIR"/user/generated/material_colors.scss
