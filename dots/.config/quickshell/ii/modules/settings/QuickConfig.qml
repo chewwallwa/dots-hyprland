@@ -249,13 +249,13 @@ ContentPage {
                     id: lightBgColorField
                     Layout.fillWidth: true
                     placeholderText: Translation.tr("Hex color (e.g., #F2E5BC)")
-                    text: Config.options.appearance.palette.lightBackgroundColor
+                    text: Config.options.appearance.palette.lightBackgroundColor || "#F2E5BC"
                     onTextChanged: {
                         // Validate hex color format and update config only if valid
-                        if (text.match(lightBgSection.hexColorRegex)) {
+                        if (text && text.match(lightBgSection.hexColorRegex)) {
                             Config.options.appearance.palette.lightBackgroundColor = text;
                             lightBgColorField.color = Appearance.colors.colOnLayer0; // Reset to normal color
-                        } else if (text.length > 0) {
+                        } else if (text && text.length > 0) {
                             // Show visual feedback for invalid format
                             lightBgColorField.color = Appearance.colors.colError;
                         } else {
@@ -272,7 +272,10 @@ ContentPage {
                     // Only update preview when the config contains a valid color
                     color: {
                         var configColor = Config.options.appearance.palette.lightBackgroundColor;
-                        return configColor.match(lightBgSection.hexColorRegex) ? configColor : "#F2E5BC";
+                        if (configColor && typeof configColor === 'string' && configColor.match(lightBgSection.hexColorRegex)) {
+                            return configColor;
+                        }
+                        return "#F2E5BC";
                     }
                     border.width: 1
                     border.color: Appearance.colors.colOutline
