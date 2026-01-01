@@ -2,6 +2,8 @@
 import argparse
 import math
 import json
+import sys
+import re
 from PIL import Image
 from materialyoucolor.quantize import QuantizeCelebi
 from materialyoucolor.score.score import Score
@@ -126,11 +128,11 @@ if not darkmode and args.light_bg_color is not None:
     color_str = args.light_bg_color.strip()
     if not color_str.startswith('#'):
         color_str = '#' + color_str
-    # Validate hex color format
-    if len(color_str) == 7 and all(c in '0123456789ABCDEFabcdef' for c in color_str[1:]):
+    # Validate hex color format using regex
+    if re.match(r'^#[0-9A-Fa-f]{6}$', color_str):
         material_colors['background'] = color_str.upper()
     else:
-        print(f"Warning: Invalid light background color format '{args.light_bg_color}', skipping override", file=__import__('sys').stderr)
+        print(f"Warning: Invalid light background color format '{args.light_bg_color}', skipping override", file=sys.stderr)
 
 # Extended material
 if darkmode == True:

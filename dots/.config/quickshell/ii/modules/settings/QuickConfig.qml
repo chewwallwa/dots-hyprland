@@ -222,6 +222,8 @@ ContentPage {
             title: Translation.tr("Light mode background")
             tooltip: Translation.tr("Custom background color for light mode")
 
+            readonly property var hexColorRegex: /^#[0-9A-Fa-f]{6}$/
+
             Process {
                 id: colorPickerProc
                 command: ["hyprpicker", "--no-fancy"]
@@ -229,7 +231,7 @@ ContentPage {
                 stdout: SplitParser {
                     onRead: data => {
                         var color = data.trim();
-                        if (color.match(/^#[0-9A-Fa-f]{6}$/)) {
+                        if (color.match(parent.hexColorRegex)) {
                             lightBgColorField.text = color;
                         } else if (color.length > 0) {
                             console.warn("Invalid color format from hyprpicker:", color);
@@ -249,7 +251,7 @@ ContentPage {
                     text: Config.options.appearance.palette.lightBackgroundColor
                     onTextChanged: {
                         // Validate hex color format and update config only if valid
-                        if (text.match(/^#[0-9A-Fa-f]{6}$/)) {
+                        if (text.match(parent.parent.hexColorRegex)) {
                             Config.options.appearance.palette.lightBackgroundColor = text;
                             lightBgColorField.color = Appearance.colors.colOnLayer0; // Reset to normal color
                         } else if (text.length > 0) {
