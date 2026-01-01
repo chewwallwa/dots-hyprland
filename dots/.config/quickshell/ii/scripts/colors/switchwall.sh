@@ -304,8 +304,13 @@ switch() {
         colors_json="$STATE_DIR/user/generated/colors.json"
         if [ -f "$colors_json" ]; then
             echo "[switchwall.sh] Overriding light mode background color to: $light_bg_color" >&2
-            # Use jq to update the background color in the generated colors.json
-            jq --arg color "$light_bg_color" '.background = $color' "$colors_json" > "$colors_json.tmp" && mv "$colors_json.tmp" "$colors_json"
+            # Use jq to update the background color in the generated colors.json with error handling
+            if jq --arg color "$light_bg_color" '.background = $color' "$colors_json" > "$colors_json.tmp"; then
+                mv "$colors_json.tmp" "$colors_json" || echo "[switchwall.sh] Error: Failed to move temporary file" >&2
+            else
+                echo "[switchwall.sh] Error: jq command failed" >&2
+                rm -f "$colors_json.tmp" 2>/dev/null
+            fi
         else
             echo "[switchwall.sh] Warning: colors.json not found at $colors_json" >&2
         fi
