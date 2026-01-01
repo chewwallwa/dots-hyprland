@@ -219,6 +219,7 @@ ContentPage {
         }
 
         ContentSubsection {
+            id: lightBgSection
             title: Translation.tr("Light mode background")
             tooltip: Translation.tr("Custom background color for light mode")
 
@@ -231,7 +232,7 @@ ContentPage {
                 stdout: SplitParser {
                     onRead: data => {
                         var color = data.trim();
-                        if (color.match(parent.hexColorRegex)) {
+                        if (color.match(lightBgSection.hexColorRegex)) {
                             lightBgColorField.text = color;
                         } else if (color.length > 0) {
                             console.warn("Invalid color format from hyprpicker:", color);
@@ -251,7 +252,7 @@ ContentPage {
                     text: Config.options.appearance.palette.lightBackgroundColor
                     onTextChanged: {
                         // Validate hex color format and update config only if valid
-                        if (text.match(parent.parent.hexColorRegex)) {
+                        if (text.match(lightBgSection.hexColorRegex)) {
                             Config.options.appearance.palette.lightBackgroundColor = text;
                             lightBgColorField.color = Appearance.colors.colOnLayer0; // Reset to normal color
                         } else if (text.length > 0) {
