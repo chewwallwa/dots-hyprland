@@ -258,6 +258,9 @@ ContentPage {
                         } else if (text.length > 0) {
                             // Show visual feedback for invalid format
                             lightBgColorField.color = Appearance.colors.colError;
+                        } else {
+                            // Empty field - reset to normal color (placeholder shown)
+                            lightBgColorField.color = Appearance.colors.colOnLayer0;
                         }
                     }
                 }
@@ -266,7 +269,11 @@ ContentPage {
                     width: 40
                     height: 40
                     radius: Appearance.rounding.small
-                    color: Config.options.appearance.palette.lightBackgroundColor
+                    // Only update preview when the config contains a valid color
+                    color: {
+                        var configColor = Config.options.appearance.palette.lightBackgroundColor;
+                        return configColor.match(lightBgSection.hexColorRegex) ? configColor : "#F2E5BC";
+                    }
                     border.width: 1
                     border.color: Appearance.colors.colOutline
                 }
