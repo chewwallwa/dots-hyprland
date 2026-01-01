@@ -231,6 +231,8 @@ ContentPage {
                         var color = data.trim();
                         if (color.match(/^#[0-9A-Fa-f]{6}$/)) {
                             lightBgColorField.text = color;
+                        } else if (color.length > 0) {
+                            console.warn("Invalid color format from hyprpicker:", color);
                         }
                     }
                 }
@@ -246,9 +248,13 @@ ContentPage {
                     placeholderText: Translation.tr("Hex color (e.g., #F2E5BC)")
                     text: Config.options.appearance.palette.lightBackgroundColor
                     onTextChanged: {
-                        // Validate hex color format
+                        // Validate hex color format and update config only if valid
                         if (text.match(/^#[0-9A-Fa-f]{6}$/)) {
                             Config.options.appearance.palette.lightBackgroundColor = text;
+                            lightBgColorField.color = Appearance.colors.colOnLayer0; // Reset to normal color
+                        } else if (text.length > 0) {
+                            // Show visual feedback for invalid format
+                            lightBgColorField.color = Appearance.colors.colError;
                         }
                     }
                 }

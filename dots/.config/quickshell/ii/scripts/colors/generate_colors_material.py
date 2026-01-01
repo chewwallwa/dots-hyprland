@@ -122,10 +122,15 @@ for color in vars(MaterialDynamicColors).keys():
 
 # Override background color for light mode if custom color is provided
 if not darkmode and args.light_bg_color is not None:
-    if args.light_bg_color.startswith('#'):
-        material_colors['background'] = args.light_bg_color
+    # Validate and normalize the hex color format
+    color_str = args.light_bg_color.strip()
+    if not color_str.startswith('#'):
+        color_str = '#' + color_str
+    # Validate hex color format
+    if len(color_str) == 7 and all(c in '0123456789ABCDEFabcdef' for c in color_str[1:]):
+        material_colors['background'] = color_str.upper()
     else:
-        material_colors['background'] = '#' + args.light_bg_color
+        print(f"Warning: Invalid light background color format '{args.light_bg_color}', skipping override", file=__import__('sys').stderr)
 
 # Extended material
 if darkmode == True:
