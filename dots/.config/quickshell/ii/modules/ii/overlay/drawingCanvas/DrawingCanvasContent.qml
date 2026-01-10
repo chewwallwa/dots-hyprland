@@ -41,7 +41,7 @@ Rectangle {
                 
                 // Pen tool button
                 ToolButton {
-                    icon: "✏️"
+                    materialSymbol: "edit"
                     text: "Pen"
                     isActive: root.currentTool === "pen"
                     onClicked: root.currentTool = "pen"
@@ -49,7 +49,7 @@ Rectangle {
                 
                 // Eraser tool button
                 ToolButton {
-                    icon: "🧹"
+                    materialSymbol: "ink_eraser"
                     text: "Eraser"
                     isActive: root.currentTool === "eraser"
                     onClicked: root.currentTool = "eraser"
@@ -245,7 +245,7 @@ Rectangle {
     // Tool button component
     component ToolButton: RippleButton {
         id: toolBtn
-        required property string icon
+        required property string materialSymbol
         required property bool isActive
         
         Layout.preferredHeight: 34
@@ -258,9 +258,11 @@ Rectangle {
         contentItem: RowLayout {
             spacing: 4
             
-            StyledText {
-                text: toolBtn.icon
+            MaterialSymbol {
+                text: toolBtn.materialSymbol
+                iconSize: 16
                 Layout.alignment: Qt.AlignVCenter
+                color: toolBtn.isActive ? Appearance.colors.colOnPrimaryContainer : Appearance.colors.colOnSurface
             }
             
             StyledText {
