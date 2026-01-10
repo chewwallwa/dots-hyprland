@@ -168,7 +168,7 @@ Rectangle {
                     var ctx = getContext("2d")
                     ctx.clearRect(0, 0, width, height)
                     
-                    // Draw all strokes
+                    // Draw all completed strokes
                     for (var i = 0; i < root.strokes.length; i++) {
                         var stroke = root.strokes[i]
                         if (stroke.points.length < 2) continue
@@ -189,6 +189,29 @@ Rectangle {
                         
                         for (var j = 1; j < stroke.points.length; j++) {
                             ctx.lineTo(stroke.points[j].x, stroke.points[j].y)
+                        }
+                        
+                        ctx.stroke()
+                    }
+                    
+                    // Draw current stroke being drawn
+                    if (canvas.currentPath && canvas.currentPath.points.length >= 2) {
+                        ctx.strokeStyle = canvas.currentPath.color
+                        ctx.lineWidth = canvas.currentPath.thickness
+                        ctx.lineCap = "round"
+                        ctx.lineJoin = "round"
+                        
+                        if (canvas.currentPath.tool === "eraser") {
+                            ctx.globalCompositeOperation = "destination-out"
+                        } else {
+                            ctx.globalCompositeOperation = "source-over"
+                        }
+                        
+                        ctx.beginPath()
+                        ctx.moveTo(canvas.currentPath.points[0].x, canvas.currentPath.points[0].y)
+                        
+                        for (var k = 1; k < canvas.currentPath.points.length; k++) {
+                            ctx.lineTo(canvas.currentPath.points[k].x, canvas.currentPath.points[k].y)
                         }
                         
                         ctx.stroke()
@@ -215,13 +238,8 @@ Rectangle {
                         if (root.isClickthrough) return
                         if (!canvas.currentPath) return
                         
+                        // Add point to current path and request repaint
                         canvas.currentPath.points.push({ x: mouse.x, y: mouse.y })
-                        
-                        // Update strokes array for rendering
-                        var tempStrokes = root.strokes.slice()
-                        tempStrokes.push(canvas.currentPath)
-                        root.strokes = tempStrokes
-                        
                         canvas.requestPaint()
                     }
                     
@@ -229,7 +247,7 @@ Rectangle {
                         if (root.isClickthrough) return
                         if (!canvas.currentPath) return
                         
-                        // Finalize the stroke
+                        // Finalize the stroke by adding it to permanent strokes
                         var newStrokes = root.strokes.slice()
                         newStrokes.push(canvas.currentPath)
                         root.strokes = newStrokes
