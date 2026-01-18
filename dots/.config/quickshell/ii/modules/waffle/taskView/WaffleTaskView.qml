@@ -23,14 +23,7 @@ Scope {
         Loader {
             id: panelLoader
             required property var modelData
-            active: false
-            Connections {
-                target: GlobalStates
-                function onOverviewOpenChanged() {
-                    if (GlobalStates.overviewOpen)
-                        panelLoader.active = true;
-                }
-            }
+            active: GlobalStates.overviewOpen
             sourceComponent: PanelWindow {
                 id: root
                 property string searchingText: ""
@@ -40,7 +33,7 @@ Scope {
 
                 WlrLayershell.namespace: "quickshell:wTaskView"
                 WlrLayershell.layer: WlrLayer.Overlay
-                WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+                // WlrLayershell.keyboardFocus: GlobalStates.overviewOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
                 color: "transparent"
 
                 anchors {
@@ -51,26 +44,7 @@ Scope {
                 }
 
                 TaskViewContent {
-                    id: taskViewContent
                     anchors.fill: parent
-
-                    Component.onCompleted: {
-                        taskViewContent.forceActiveFocus();
-                    }
-                    Keys.onPressed: event => {
-                        if (event.key === Qt.Key_Escape) {
-                            GlobalStates.overviewOpen = false;
-                        }
-                    }
-
-                    Connections {
-                        target: GlobalStates
-                        function onOverviewOpenChanged() {
-                            if (!GlobalStates.overviewOpen)
-                                taskViewContent.close();
-                        }
-                    }
-                    onClosed: panelLoader.active = false
                 }
             }
         }

@@ -13,8 +13,8 @@ import Quickshell.Hyprland
 
 Item {
     id: root
-    required property var screen
-    readonly property HyprlandMonitor monitor: Hyprland.monitorFor(screen)
+    required property var panelWindow
+    readonly property HyprlandMonitor monitor: Hyprland.monitorFor(panelWindow.screen)
     readonly property var toplevels: ToplevelManager.toplevels
     readonly property int workspacesShown: Config.options.overview.rows * Config.options.overview.columns
     readonly property int workspaceGroup: Math.floor((monitor.activeWorkspace?.id - 1) / workspacesShown)
@@ -25,6 +25,35 @@ Item {
     property var monitorData: HyprlandData.monitors.find(m => m.id === root.monitor?.id)
     property real scale: Config.options.overview.scale
     property color activeBorderColor: Appearance.colors.colSecondary
+
+    // --- MANUAL CONFIGURATION HERE ---------------------------------
+    function getManualStart(monitorName, monitorId) {
+        // Example by NAME (run 'hyprctl monitors' to find yours)
+        // if (monitorName === "DP-1") return 1;      // Laptop screen starts at 1
+        // if (monitorName === "HDMI-A-1") return 11; // External monitor starts at 11
+
+        // OR Example by ID (0, 1, 2...)
+        if (monitorId === 0) return 1;
+        if (monitorId === 1) return 11;
+    }
+
+    // Convert numbers to Kanji (1-10)
+    function getKanji(num) {
+        // Math: (11 - 1) % 10 + 1 = 1. (1 - 1) % 10 + 1 = 1.
+        // Ensures 1, 11, 21 all map back to "1"
+        let val = ((num - 1) % 10) + 1;
+
+        const map = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+        return map[val] ?? val;
+    }
+
+
+    // Calls manual setup using current monitor name & ID
+    property int workspaceRangeStart: getManualStart(monitor.name, monitor.id)
+
+    // Removed dynamic pagination (workspaceGroup), now it's fixed range
+    property int workspaceRangeEnd: workspaceRangeStart + workspacesShown
+    // --------------------------------------------------------------
 
     property real workspaceImplicitWidth: (monitorData?.transform % 2 === 1) ? 
         ((monitor.height - monitorData?.reserved[0] - monitorData?.reserved[2]) * root.scale / monitor.scale) :
@@ -50,21 +79,6 @@ Item {
 
     property Component windowComponent: OverviewWindow {}
     property list<OverviewWindow> windowWidgets: []
-    
-    function getWsRow(ws) {
-        // 1-indexed workspace, 0-indexed row
-        var normalRow = Math.floor((ws - 1) / Config.options.overview.columns) % Config.options.overview.rows;
-        return (Config.options.overview.orderBottomUp ? Config.options.overview.rows - normalRow - 1 : normalRow);
-    }
-    function getWsColumn(ws) {
-        // 1-indexed workspace, 0-indexed column
-        var normalCol = (ws - 1) % Config.options.overview.columns;
-        return (Config.options.overview.orderRightLeft ? Config.options.overview.columns - normalCol - 1 : normalCol);
-    }
-    function getWsInCell(ri, ci) {
-        // 1-indexed workspace, 0-indexed row and column index
-        return (Config.options.overview.orderBottomUp ? Config.options.overview.rows - ri - 1 : ri) * Config.options.overview.columns + (Config.options.overview.orderRightLeft ? Config.options.overview.columns - ci - 1 : ci) + 1
-    }
 
     StyledRectangularShadow {
         target: overviewBackground
@@ -100,8 +114,10 @@ Item {
                             id: workspace
                             required property int index
                             property int colIndex: index
-                            property int workspaceValue: root.workspaceGroup * root.workspacesShown + getWsInCell(row.index, colIndex)
-                            property color defaultWorkspaceColor: Appearance.colors.colSurfaceContainerLow
+                            // --------------------------------------
+                            property int workspaceValue: root.workspaceRangeStart + (row.index * Config.options.overview.columns) + colIndex
+                            // --------------------------------------
+                            property color defaultWorkspaceColor: ColorUtils.mix(Appearance.colors.colBackgroundSurfaceContainer, Appearance.colors.colSurfaceContainerHigh, 0.8)
                             property color hoveredWorkspaceColor: ColorUtils.mix(defaultWorkspaceColor, Appearance.colors.colLayer1Hover, 0.1)
                             property color hoveredBorderColor: Appearance.colors.colLayer2Hover
                             property bool hoveredWhileDragging: false
@@ -122,9 +138,13 @@ Item {
 
                             StyledText {
                                 anchors.centerIn: parent
-                                text: workspace.workspaceValue
+                                // ----------------------------------
+                                text: root.getKanji(workspace.workspaceValue)
+                                // ----------------------------------
                                 font {
-                                    pixelSize: root.workspaceNumberSize * root.scale
+                                    // ------------------------------
+                                    pixelSize: root.workspaceNumberSize * root.scale -15
+                                    // ------------------------------
                                     weight: Font.DemiBold
                                     family: Appearance.font.family.expressive
                                 }
@@ -173,13 +193,19 @@ Item {
             Repeater { // Window repeater
                 model: ScriptModel {
                     values: {
-                        // console.log(JSON.stringify(ToplevelManager.toplevels.values.map(t => t), null, 2))
+                        //----------------------------------------------
                         return ToplevelManager.toplevels.values.filter((toplevel) => {
                             const address = `0x${toplevel.HyprlandToplevel?.address}`
                             var win = windowByAddress[address]
-                            const inWorkspaceGroup = (root.workspaceGroup * root.workspacesShown < win?.workspace?.id && win?.workspace?.id <= (root.workspaceGroup + 1) * root.workspacesShown)
-                            return inWorkspaceGroup;
+
+                            // Manual Logic: Is window within [Manual Start] and [Manual End]?
+                            // e.g. If start is 11 with 9 slots, keep windows 11 to 19.
+                            if (!win?.workspace?.id) return false;
+
+                            const id = win.workspace.id;
+                            return (id >= root.workspaceRangeStart && id < root.workspaceRangeEnd);
                         })
+                        //----------------------------------------------
                     }
                 }
                 delegate: OverviewWindow {
@@ -196,9 +222,14 @@ Item {
 
                     property bool atInitPosition: (initX == x && initY == y)
 
-                    // Offset on the canvas
-                    property int workspaceColIndex: getWsColumn(windowData?.workspace.id)
-                    property int workspaceRowIndex: getWsRow(windowData?.workspace.id)
+                    // Offset on the canvas -------------------------
+                    // Calc position based on YOUR manual range, not global
+                    property int relativeWorkspaceId: (windowData?.workspace.id - root.workspaceRangeStart)
+                    // Prevent negatives & calc local col/row
+                    property int workspaceColIndex: Math.max(0, relativeWorkspaceId % Config.options.overview.columns)
+                    property int workspaceRowIndex: Math.max(0, Math.floor(relativeWorkspaceId / Config.options.overview.columns))
+                    // ----------------------------------------------
+
                     xOffset: (root.workspaceImplicitWidth + workspaceSpacing) * workspaceColIndex
                     yOffset: (root.workspaceImplicitHeight + workspaceSpacing) * workspaceRowIndex
                     property real xWithinWorkspaceWidget: Math.max((windowData?.at[0] - (monitor?.x ?? 0) - monitorData?.reserved[0]) * root.scale, 0)
@@ -301,8 +332,12 @@ Item {
 
             Rectangle { // Focused workspace indicator
                 id: focusedWorkspaceIndicator
-                property int rowIndex: getWsRow(monitor.activeWorkspace?.id)
-                property int colIndex: getWsColumn(monitor.activeWorkspace?.id)
+                // --------------------------------------------------
+                // Calc focus square position based on manual start
+                property int activeWorkspaceInGroup: (monitor.activeWorkspace?.id ?? 0) - root.workspaceRangeStart + 1
+                // --------------------------------------------------
+                property int rowIndex: Math.floor((activeWorkspaceInGroup - 1) / Config.options.overview.columns)
+                property int colIndex: (activeWorkspaceInGroup - 1) % Config.options.overview.columns
                 x: (root.workspaceImplicitWidth + workspaceSpacing) * colIndex
                 y: (root.workspaceImplicitHeight + workspaceSpacing) * rowIndex
                 z: root.windowZ

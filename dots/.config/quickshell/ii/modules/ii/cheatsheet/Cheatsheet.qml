@@ -4,7 +4,6 @@ import qs.modules.common.widgets
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt.labs.synchronizer
 import Qt5Compat.GraphicalEffects
 import Quickshell.Io
 import Quickshell
@@ -13,15 +12,15 @@ import Quickshell.Hyprland
 
 Scope { // Scope
     id: root
-    property var tabButtonList: [
-        {
-            "icon": "keyboard",
-            "name": Translation.tr("Keybinds")
-        },
-        {
-            "icon": "experiment",
-            "name": Translation.tr("Elements")
-        },
+
+    Component { id: keybindsComp; CheatsheetKeybinds {} }
+    Component { id: tableComp; CheatsheetPeriodicTable {} }
+    Component { id: katakanaComp; CheatsheetKatakana {} }
+
+    property var cheatsheetArr: [
+        { name: Translation.tr("Keybinds"), icon: "keyboard", component: keybindsComp },
+        ...(Config.options.cheatsheet.showPeriodicTable ? [{ name: Translation.tr("Elements"), icon: "experiment", component: tableComp }] : []),
+        ...(Config.options.cheatsheet.showKatakana ? [{ name: Translation.tr("Katakana"), icon: "カ", component: katakanaComp }] : [])
     ]
 
     Loader {
@@ -54,16 +53,13 @@ Scope { // Scope
                 item: cheatsheetBackground
             }
 
-            Component.onCompleted: {
-                GlobalFocusGrab.addDismissable(cheatsheetRoot);
-            }
-            Component.onDestruction: {
-                GlobalFocusGrab.removeDismissable(cheatsheetRoot);
-            }
-            Connections {
-                target: GlobalFocusGrab
-                function onDismissed() {
-                    cheatsheetRoot.hide();
+            HyprlandFocusGrab { // Click outside to close
+                id: grab
+                windows: [cheatsheetRoot]
+                active: cheatsheetRoot.visible
+                onCleared: () => {
+                    if (!active)
+                        cheatsheetRoot.hide();
                 }
             }
 
@@ -138,24 +134,18 @@ Scope { // Scope
                         enableShadow: false
                         ToolbarTabBar {
                             id: tabBar
-                            tabButtonList: root.tabButtonList
-
-                            Synchronizer on currentIndex {
-                                property alias source: swipeView.currentIndex
-                            }
+                            tabButtonList: cheatsheetArr
+                            currentIndex: swipeView.currentIndex
                         }
                     }
 
-                    SwipeView { // Content pages
+                    SwipeView {
                         id: swipeView
                         Layout.topMargin: 5
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        currentIndex: tabBar.currentIndex
                         spacing: 10
-                        currentIndex: Persistent.states.cheatsheet.tabIndex
-                        onCurrentIndexChanged: {
-                            Persistent.states.cheatsheet.tabIndex = currentIndex;
-                        }
 
                         implicitWidth: Math.max.apply(null, contentChildren.map(child => child.implicitWidth || 0))
                         implicitHeight: Math.max.apply(null, contentChildren.map(child => child.implicitHeight || 0))
@@ -170,9 +160,14 @@ Scope { // Scope
                             }
                         }
 
-                        CheatsheetKeybinds {}
-                        CheatsheetPeriodicTable {}
+                        Repeater {
+                            model: root.cheatsheetArr.length
+                            Loader {
+                                sourceComponent: root.cheatsheetArr[index].component
+                            }
+                        }
                     }
+
                 }
             }
         }

@@ -92,6 +92,7 @@ Scope {
     WlSessionLock {
         id: lock
         locked: GlobalStates.screenLocked
+
         surface: root.sessionLockSurface
     }
 
