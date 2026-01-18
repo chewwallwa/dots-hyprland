@@ -151,57 +151,124 @@ dots/.config/quickshell/ii/shell.qml
 dots/.config/quickshell/ii/welcome.qml
 - Seção Policies (Weeb/AI) comentada, ajustes display (l:278-339)
 
-----------------------------
+###########################################################
+## arch reinstall
 
-Destaques:
-- lockscreen completamente customizada (Lock.qml, LockSurface.qml, LockContext.qml, PasswordChars.qml, noise.png)
-- Interação e configuração fina com wallpaper (Wallpapers.qml, QuickConfig.qml, apply-hyprland-config.sh)
-- Keybinds, cheatsheet, bar refinados e personalizáveis
-- Periodic Table e Katakana disponíveis no cheatsheet
+screencorners.qml
+commented out the screen line in
 
----------------------------- AFTER ARCH REINSTALL (kernel hardened and many other things, so it broke a little)
+added a file dots/.config/quickshell/ii/modules/ii/bar/TimersTray.qml
+and a line to it in Barcontent.qml (330)
 
-- keybinds.conf (19-20) changed old toggle overview to toggle search
+dots/.config/quickshell/ii/modules/ii/lock/LockSurface.qml
+(18-38) added a mouse area to turn the screen on on mouse movement on lock screen
 
-- replaced session.qml with the original
+replaced session.qml with the original
 
-- keybinds.conf
-added waterfox (130)
--p vlc in media play pause (184)
+dots/.config/quickshell/ii/modules/ii/overview/Overview.qml (93-100)
+dots/.config/quickshell/ii/modules/ii/overview/OverviewWidget.qml (29-56; 117-119; 141-147; 196-208; 225-231; 335-338)
+- center overview and custom numbers and range
 
-- autostarts
-put waterfox in place of chromium
+created otherpopup.qml
+- added OhterPopup property on shell.qml
 
-- start_apps
-starts special apps and closes them
+dots/.config/quickshell/ii/modules/ii/mediaControls/MediaControls.qml
+- added scroool on media control area (121-136)
+dots/.config/quickshell/ii/modules/ii/mediaControls/PlayerControl.qml
+- ripple button on top right e mais quadrado (removido do final) (148-177)
+- volume MPRIS control (262-298)
+- Title and artist refactor and animation (210-277)
+- margens ajustadas (307,310,254)
+dots/.config/quickshell/ii/modules/common/widgets/WaveVisualizer.qml
+- commented the orignal and added a bar visualizer (75-152)
 
-- commented out the screen line in screencorners
+-----------------------------------------------------------
+## preferences
 
-- created ~/.config/autostart/workset-4-for-tasks.sh and added the keybind
-
-------------------
-
-Screenshot problem:
-
-- screen snip
-bind = , D, exec, slurp | xargs -I {} grim -g “{}” - | wl-copy
-- ocr
-bind = , F, exec, slurp | xargs -I {} grim -g “{}” /tmp/ocr_image.png && tesseract /tmp/ocr_image.png stdout | wl-copy && rm /tmp/ocr_image.png
-- lens
-bind = , E, exec, slurp | xargs -I {} grim -g “{}” /tmp/region_lens.png && xdg-open ‘https://lens.google.com/upload’ && sleep 1 && wl-copy < /tmp/region_lens.png
-
------------------
-
-center overview and custom numbers and range
-
-~/.config/quickshell/ii/modules/ii/overview/Overview.qml (93-100)
-
-~/.config/quickshell/ii/modules/ii/overview/OverviewWidget.qml (29-56; 117-119; 141-147; 196-208; 225-231; 335-338)
-
----------------
-
-downloaded ssdm ii theme
+config.json
+- night light 00:00 ~ 23:59
 
 https://github.com/3d3f/ii-sddm-theme
+- downloaded ssdm ii theme
 
-visible: !root.isSimplifiedMonitor (60,70, 25)
+dots/.config/autostart/workset-3-for-drawing.sh
+- added JP VPN condition
+
+dots/.config/autostart/workset-1-for-study.sh
+dots/.config/autostart/workset-2-for-config.sh
+dots/.config/autostart/workset-3-for-drawing.sh
+dots/.config/autostart/workset-4-for-tasks.sh
+- refactor
+
+dots/.config/autostart/check_keys.sh
+- added a caps and numlock toggle script to show a popup on toggle
+- added it to custom/execs.conf
+
+dots/.config/autostart/toggle-special.sh
+- added a scipt for toggle special workspace
+
+start_apps
+- starts special apps and closes them
+
+keybinds.conf
+- changed old toggle overview to toggle search (19-20)
+- added waterfox (130)
+- put a popup to show the submap change.
+- added submappopup.qml
+- changed the keybind for special workspace
+- added keybind to workset-3-for-drawing.sh
+- addeed notifies pros screenshots
+- added record region with sound
+
+custom/rules.conf
+- added a rule so special do not grab focus when apps activate
+
+general.conf
+- added lock scroll on mouse
+
+added easyeffects to execs
+
+
+-----------------------------------------------------------
+## troubleshoot (kernel hardened)
+
+-------------------------
+keybinds.conf
+- screen snip n funcionava com quickshell
+bind = , D, exec, slurp | xargs -I {} grim -g “{}” - | wl-copy
+- ocr n funcionava com quickshell
+bind = , F, exec, slurp | xargs -I {} grim -g “{}” /tmp/ocr_image.png && tesseract /tmp/ocr_image.png stdout | wl-copy && rm /tmp/ocr_image.png
+- lens n funcionava com quickshell
+bind = , E, exec, slurp | xargs -I {} grim -g “{}” /tmp/region_lens.png && xdg-open ‘https://lens.google.com/upload’ && sleep 1 && wl-copy < /tmp/region_lens.png
+- vlc n da play/pause com atalho (ainda n da play pelo mpris) (184)
+p vlc in media play pause
+[removidos] -------------
+
+- sddm numa teela só  # [n funcionou]
+/usr/share/sddm/scripts/Xsetup - rotação
+
+nano ~/.config/user-dirs.dirs >>>>> XDG_PICTURES_DIR="$HOME/Pictures"
+- fullscrren print n salvava no lugar certo
+dots/.config/quickshell/ii/modules/ii/regionSelector/RegionSelection.qml
+- remove satty do region selection pra n quebrar (232-215)
+
+-------------------------
+- screenshot com qs so selecionava mas n funcionava
+scripts/record.sh
+- refactor... fix region record dont stop
+------------------------- [ainda tem problema com geometry]
+
+-------------------------
+keybinds.conf
+- bindl   =       , S, exec, bash -c "grim - | tee >(cliphist store) | wl-copy" # Screenshot -file (333)
+execs.conf
+- exec-once = wl-paste --watch cliphist store & (24)
+or
+keybinds.conf
+# bindl   =       , S, exec, bash -c 'MON=$(hyprctl monitors -j | jq -r ".[] | select(.focused) | .name"); hyprshot -m output -o "$MON" --clipboard-only --silent' # Screenshot -file
++standard exec.com
+-------------------------
+
+nano ~/.config/firejail/quickshell.profile
+- firejail: liberar clipboard pros prints # [n funcionou]
+

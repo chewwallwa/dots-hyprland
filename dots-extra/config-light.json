@@ -30,7 +30,8 @@
       "title": "Iosevka"
     },
     "palette": {
-      "type": "scheme-rainbow"
+      "lightBackgroundColor": "#CA4343",
+      "type": "scheme-monochrome"
     },
     "transparency": {
       "automatic": true,
@@ -79,7 +80,7 @@
     },
     "slideshowInterval": 5,
     "thumbnailPath": "",
-    "wallpaperPath": "/home/thierry/Pictures/Wallpapers/flowers2.png",
+    "wallpaperPath": "/home/thierry/Pictures/Wallpapers/Dark/mists.jpg",
     "widgets": {
       "clock": {
         "cookie": {
@@ -333,8 +334,8 @@
       "enable": false
     },
     "night": {
-      "automatic": true,
-      "colorTemperature": 5000,
+      "automatic": false,
+      "colorTemperature": 3667,
       "from": "19:00",
       "to": "06:30"
     }

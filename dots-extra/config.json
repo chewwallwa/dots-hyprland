@@ -30,7 +30,7 @@
       "title": "Iosevka"
     },
     "palette": {
-      "type": "scheme-tonal-spot"
+      "type": "scheme-rainbow"
     },
     "transparency": {
       "automatic": true,
@@ -45,8 +45,8 @@
       "terminalGenerationProps": {
         "forceDarkMode": false,
         "harmonizeThreshold": 100,
-        "harmony": 0.6,
-        "termFgBoost": 0.35
+        "harmony": 0.4,
+        "termFgBoost": 0.45
       }
     }
   },
@@ -71,15 +71,15 @@
     "hideWhenFullscreen": true,
     "parallax": {
       "autoVertical": false,
-      "enableSidebar": true,
+      "enableSidebar": false,
       "enableWorkspace": true,
-      "vertical": false,
+      "vertical": true,
       "widgetsFactor": 1.2,
-      "workspaceZoom": 1.08
+      "workspaceZoom": 1.03
     },
-    "slideshowInterval": 5,
+    "slideshowInterval": 7,
     "thumbnailPath": "",
-    "wallpaperPath": "/home/thierry/Pictures/Wallpapers/field.png",
+    "wallpaperPath": "/home/thierry/Pictures/Wallpapers/Dark/Sif.png",
     "widgets": {
       "clock": {
         "cookie": {
@@ -165,11 +165,11 @@
     "verbose": true,
     "vertical": false,
     "weather": {
-      "city": "New York",
+      "city": "Teresina",
       "enable": true,
-      "enableGPS": true,
+      "enableGPS": false,
       "fetchInterval": 10,
-      "useUSCS": true
+      "useUSCS": false
     },
     "workspaces": {
       "alwaysShowNumbers": true,
@@ -301,12 +301,12 @@
       }
     },
     "terminal": {
-      "kittyBackgroundOpacity": 0.9
+      "kittyBackgroundOpacity": 0.93
     },
     "windowRules": {
-      "opacityActive": 0.9,
+      "opacityActive": 0.93,
       "opacityHover": 0.95,
-      "opacityInactive": 0.8
+      "opacityInactive": 0.84
     }
   },
   "interactions": {
@@ -334,9 +334,9 @@
     },
     "night": {
       "automatic": true,
-      "colorTemperature": 5000,
-      "from": "19:00",
-      "to": "06:30"
+      "colorTemperature": 3513,
+      "from": "00:00",
+      "to": "23:59"
     }
   },
   "lock": {
@@ -407,7 +407,7 @@
     "targetRegions": {
       "content": false,
       "contentRegionOpacity": 0.8,
-      "layers": false,
+      "layers": true,
       "opacity": 0.3,
       "selectionPadding": 5,
       "showLabel": false,
@@ -461,12 +461,12 @@
     },
     "cornerOpen": {
       "bottom": false,
-      "clickless": true,
-      "clicklessCornerEnd": true,
+      "clickless": false,
+      "clicklessCornerEnd": false,
       "clicklessCornerVerticalOffset": 1,
       "cornerRegionHeight": 250,
       "cornerRegionWidth": 5,
-      "enable": true,
+      "enable": false,
       "valueScroll": false,
       "visualize": false
     },
@@ -516,7 +516,7 @@
   },
   "sounds": {
     "battery": false,
-    "pomodoro": false,
+    "pomodoro": true,
     "theme": "freedesktop"
   },
   "time": {
@@ -526,7 +526,7 @@
     "pomodoro": {
       "breakTime": 300,
       "cyclesBeforeLongBreak": 4,
-      "focus": 1500,
+      "focus": 1800,
       "longBreak": 900
     },
     "secondPrecision": false,
