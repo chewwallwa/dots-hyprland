@@ -226,6 +226,8 @@ Item { // Bar content region
             anchors.verticalCenter: parent.verticalCenter
         }
 
+
+
         RowLayout {
             id: rightSectionRowLayout
             anchors.fill: parent
@@ -324,6 +326,8 @@ Item { // Bar content region
                     }
                 }
             }
+
+            TimersTray {}
 
             SysTray {
                 visible: root.useShortenedForm === 0
