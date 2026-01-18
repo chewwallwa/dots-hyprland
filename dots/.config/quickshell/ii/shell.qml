@@ -40,6 +40,8 @@ import Quickshell.Io
 import Quickshell.Hyprland
 import qs.services
 
+import "./ii"
+
 
 ShellRoot {
     id: root
@@ -82,6 +84,8 @@ ShellRoot {
     PanelLoader { identifier: "wBackground"; component: WaffleBackground {} }
     PanelLoader { identifier: "wOnScreenDisplay"; component: WaffleOSD {} }
     ReloadPopup {}
+    OtherPopup {}
+    SubmapPopup {}
 
     component PanelLoader: LazyLoader {
         required property string identifier
@@ -117,39 +121,20 @@ ShellRoot {
         onPressed: root.cyclePanelFamily()
     }
 
-    // Timer { // wallpaper timer
-    //     id: rotationTimer
-    //     interval: Config.options.background.slideInterval * 60000
-    //     running: Config.options.background.enableSlide
-    //     repeat: true
-    //     triggeredOnStart: false
-    //
-    //     onTriggered: {
-    //         Wallpapers.randomFromCurrentFolder();
-    //     }
-    // }
-    // Connections { // timer conections
-    //     target: Config.options.background
-    //     function onRotationIntervalChanged() {
-    //         if (rotationTimer.running) {
-    //             rotationTimer.restart();
-    //         }
-    //     }
-    // } // wallpaper timer end
-
     Timer { // wallpaper timer
-        id: rotationTimer
-        interval: Math.max(1, Config.options.background.slideInterval) * 60000 // minutos -> ms
-        running: Config.options.background.enableSlide
+        id: enableSlideshow
+        interval: Math.max(1, Config.options.background.slideshowInterval) * 60000 // min -> ms
+        running: Config.options.background.enableSlideshow
         repeat: true
-
         onTriggered: {
-            console.log("[Wallpaper] Timer triggered. Changing wallpaper...");
-            try {
-                Wallpapers.randomFromCurrentFolder();
-            } catch (e) {
-                console.error("[Wallpaper] Error changing wallpaper:", e);
-            }
+            console.log("[Wallpaper] Timer triggered. Cycling wallpaper...");
+            Wallpapers.randomFromCurrentFolder();
+        }
+    }
+    Connections {
+        target: Config.options.background
+        function onSlideshowIntervalChanged() {
+            if (enableSlideshow.running) enableSlideshow.restart();
         }
     }
 
