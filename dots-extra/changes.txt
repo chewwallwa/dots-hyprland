@@ -1,0 +1,274 @@
+Personalizações e Diferenças do Branch `all-my-mods` em relação a `clean` (Hyprland/Quickshell)
+
+----------------------------
+
+dots/.config/fish/config.fish
+- Novos aliases personalizados (l:17-20)
+- Ajuste na localização do starship/init (l:13-19)
+- Relocação do cat sequences.txt (l:22-25)
+
+dots/.config/hypr/custom/execs.conf
+- Início automático do VLC como scratchpad (l:4-6), ações anteriores comentadas
+
+dots/.config/hypr/custom/rules.conf
+- Bloco de variáveis de opacidade customizável (l:1-7)
+- Regras de transparência para kitty, dolphin, kate (l:9-21)
+- Regras para VLC, BTOP, Bitwarden e pavucontrol-qt (l:23-42)
+
+dots/.config/hypr/custom/rules.conf.bak
+- Backup das regras acima (arquivo novo)
+
+dots/.config/hypr/hyprland/env.conf
+- Bloco de variáveis para input method (l:1-7)
+- Comentários e possíveis ajustes para tearing/cursor (l:17-23)
+
+dots/.config/hypr/hyprland/execs.conf
+- Adição de comando Wallpapers randomFromCurrentFolder (l:4)
+- Troca do reload com parâmetro -n (l:14)
+- Cursor diferente (l:18)
+
+dots/.config/hypr/hyprland/general.conf
+- Monitoração dual setup (DP-1, HDMI-A-1) (l:1-4)
+- Redução de gaps e ajustes de border (l:20-22)
+- Novo tratamento para blur, dim, popups (l:49-57, l:79-87)
+- Ajustes em rounding, contrast, snap, bem como configs de teclado mais detalhadas
+
+dots/.config/hypr/hyprland/general.conf.bak
+- Backup de configuração geral alternativa (arquivo novo)
+
+dots/.config/hypr/hyprland/keybinds.conf
+- Revisão completa dos keybinds, estrutura "submaps" e seção por programa/utilidade (mudanças extensas em todo o arquivo)
+- Adição de submapas para "Session", "App", "Media", "Browser", "Worksets", "Tiling", etc
+- Novos binds para cheatsheet, OCR, clipboard, quickshell, workspace, widgets
+
+dots/.config/hypr/hyprland/rules.conf
+- Nova regra de blur: ignora todos exceto quickshell (l:8-11)
+- Ajuste em layerrule (por exemplo, lockWindowPusher, session) (l:141, l:155)
+- Ajustes em regras de animação e prioridade para "special/workspace"
+
+dots/.config/hypr/hyprlock/colors.conf
+- Nova paleta de cores; novo background_image definido (l:5, l:11-13)
+
+dots/.config/hypr/workspaces.conf
+- Geração automática de workspaces múltiplos para DP-1 e HDMI-A-1 (l:5-23)
+
+dots/.config/kitty/kitty.conf
+- Fonte alterada para Iosevka, tamanho ajustado, opacidade de fundo (l:1-7, l:11-17)
+- Comentários e configs padrões removidos
+- Adição de backup kitty.conf.bak (arquivo novo)
+
+dots/.config/quickshell/ii/modules/common/Config.qml
+- Painéis e pallets ativados/desativados (l:82-88)
+- Políticas AI/weeb e accent color (l:91-194)
+- Várias alterações para widgets/configs/bar (l:162-644)
+- Gaps, borders e blur de acordo com personalização do Hyprland
+
+dots/.config/quickshell/ii/modules/common/Directories.qml
+- shellConfigName agora depende de dark/light mode (l:33)
+- Algumas referências a avatar removidas (l:48-50)
+
+dots/.config/quickshell/ii/modules/common/widgets/notification_utils.js
+- Novo arquivo para utilidades de notificações JS
+
+dots/.config/quickshell/ii/modules/ii/bar/BarContent.qml
+- Propriedades por monitor para mostrar/esconder elementos do bar
+- LeftSidebarButton só visível em tela principal (l:89)
+- ActiveWindow sempre visível (l:94)
+- Novos loaders e condicional por monitor
+
+dots/.config/quickshell/ii/modules/ii/cheatsheet/Cheatsheet.qml
+- Cheatsheet agora mostra tabs dinâmicos (Keybinds, Elements, Katakana) com config (l:15-161)
+- Loader repete componentes conforme custom config
+
+dots/.config/quickshell/ii/modules/ii/cheatsheet/CheatsheetKatakana.qml
+- Nova cheatsheet de Katakana (arquivo novo)
+
+dots/.config/quickshell/ii/modules/ii/cheatsheet/CheatsheetKeybinds.qml
+- Espaçamento e layout refinados para mostrar keybinds (l:7-119)
+
+dots/.config/quickshell/ii/modules/ii/cheatsheet/katakana.js
+- Tabela Katakana em formato JS (novo arquivo)
+
+dots/.config/quickshell/ii/modules/ii/lock/Lock.qml
+- LockScreen refeito: contexto compartilhado para múltiplas telas, integração com keyring, unlock via PAM, blur, eventos de foco e workaround de refocus (l:tudo)
+
+dots/.config/quickshell/ii/modules/ii/lock/LockContext.qml
+- Gerenciamento inteligente de foco, senha, unlock, PAM, fingerprints (arquivo novo)
+
+dots/.config/quickshell/ii/modules/ii/lock/LockSurface.qml
+- Reescrito! Layout agora em Rectangle, centralização, imagem de fundo, informações do sistema, custom password box, timers, debug bypass etc (l:tudo)
+
+dots/.config/quickshell/ii/modules/ii/lock/PasswordChars.qml
+- Ajuste do tamanho dos caracteres em password box (l:30-32)
+
+dots/.config/quickshell/ii/modules/ii/lock/noise.png
+- Novo arquivo para camada de ruído no lockscreen
+
+dots/.config/quickshell/ii/modules/ii/lock/pam/fprintd.conf
+- Arquivo de configuração para fingerprint PAM (novo)
+
+dots/.config/quickshell/ii/modules/settings/BarConfig.qml
+- Ajustes em Han chars (l:325), outros tweaks
+
+dots/.config/quickshell/ii/modules/settings/GeneralConfig.qml
+- Seção Policies (AI/weeb) comentada, removida do UI (l:191-277)
+
+dots/.config/quickshell/ii/modules/settings/HyprlandConfig.qml
+- Nova página de configurações Hyprland no settings (arquivo novo)
+
+dots/.config/quickshell/ii/modules/settings/InterfaceConfig.qml
+- Suporte para filtros de cheatsheet/katakana/periodic table no settings (l:100-131)
+
+dots/.config/quickshell/ii/modules/settings/QuickConfig.qml
+- Removidas/recomentadas zonas para “Random Konachan/Osu” (l:82-115)
+- Suporte para Wallpaper slideshow/timer (l:217-243)
+
+dots/.config/quickshell/ii/modules/waffle/actionCenter/BodyRectangle.qml
+dots/.config/quickshell/ii/modules/waffle/actionCenter/FooterMoreButton.qml
+dots/.config/quickshell/ii/modules/waffle/actionCenter/FooterRectangle.qml
+dots/.config/quickshell/ii/modules/waffle/actionCenter/PageColumn.qml
+dots/.config/quickshell/ii/modules/waffle/actionCenter/Separator.qml
+- Novos widgets QML para o Action Center (arquivos novos)
+
+dots/.config/quickshell/ii/scripts/colors/switchwall.sh
+- Agora suporte automático ao modo dark/light na escolha de config
+- Chama apply-hyprland-config.sh após trocar wallpaper (l:8-77)
+- Funções para slideshow de papel de parede
+
+dots/.config/quickshell/ii/scripts/hyprland/apply-hyprland-config.sh
+- Script bash para aplicar configs do Hyprland a partir do config.json (arquivo novo)
+
+dots/.config/quickshell/ii/services/Wallpapers.qml
+- Novo código para seleção recursiva e padrão de wallpaper, integração display (l:79-143)
+
+dots/.config/quickshell/ii/settings.qml
+- Adicionada nova página de Settings para "Hyprland" (l:32-37)
+
+dots/.config/quickshell/ii/shell.qml
+- Muita refatoração: removido waffle lock, taskview, polkit, startmenu, sessionScreen.
+- Ajustes na ordem dos painéis, integração única de sidebarRight, cronômetro para slideshow de wallpapers (l:6-42, l:73-133)
+
+dots/.config/quickshell/ii/welcome.qml
+- Seção Policies (Weeb/AI) comentada, ajustes display (l:278-339)
+
+###########################################################
+## arch reinstall
+
+screencorners.qml
+commented out the screen line in
+
+added a file dots/.config/quickshell/ii/modules/ii/bar/TimersTray.qml
+and a line to it in Barcontent.qml (330)
+
+dots/.config/quickshell/ii/modules/ii/lock/LockSurface.qml
+(18-38) added a mouse area to turn the screen on on mouse movement on lock screen
+
+replaced session.qml with the original
+
+dots/.config/quickshell/ii/modules/ii/overview/Overview.qml (93-100)
+dots/.config/quickshell/ii/modules/ii/overview/OverviewWidget.qml (29-56; 117-119; 141-147; 196-208; 225-231; 335-338)
+- center overview and custom numbers and range
+
+created otherpopup.qml
+- added OhterPopup property on shell.qml
+
+dots/.config/quickshell/ii/modules/ii/mediaControls/MediaControls.qml
+- added scroool on media control area (121-136)
+dots/.config/quickshell/ii/modules/ii/mediaControls/PlayerControl.qml
+- ripple button on top right e mais quadrado (removido do final) (148-177)
+- volume MPRIS control (262-298)
+- Title and artist refactor and animation (210-277)
+- margens ajustadas (307,310,254)
+dots/.config/quickshell/ii/modules/common/widgets/WaveVisualizer.qml
+- commented the orignal and added a bar visualizer (75-152)
+
+-----------------------------------------------------------
+## preferences
+
+config.json
+- night light 00:00 ~ 23:59
+
+https://github.com/3d3f/ii-sddm-theme
+- downloaded ssdm ii theme
+
+dots/.config/autostart/workset-3-for-drawing.sh
+- added JP VPN condition
+
+dots/.config/autostart/workset-1-for-study.sh
+dots/.config/autostart/workset-2-for-config.sh
+dots/.config/autostart/workset-3-for-drawing.sh
+dots/.config/autostart/workset-4-for-tasks.sh
+- refactor
+
+dots/.config/autostart/check_keys.sh
+- added a caps and numlock toggle script to show a popup on toggle
+- added it to custom/execs.conf
+
+dots/.config/autostart/toggle-special.sh
+- added a scipt for toggle special workspace
+
+start_apps
+- starts special apps and closes them
+
+keybinds.conf
+- changed old toggle overview to toggle search (19-20)
+- added waterfox (130)
+- put a popup to show the submap change.
+- added submappopup.qml
+- changed the keybind for special workspace
+- added keybind to workset-3-for-drawing.sh
+- addeed notifies pros screenshots
+- added record region with sound
+
+custom/rules.conf
+- added a rule so special do not grab focus when apps activate
+
+general.conf
+- added lock scroll on mouse
+
+added easyeffects to execs
+
+
+-----------------------------------------------------------
+## troubleshoot (kernel hardened)
+
+-------------------------
+keybinds.conf
+- screen snip n funcionava com quickshell
+bind = , D, exec, slurp | xargs -I {} grim -g “{}” - | wl-copy
+- ocr n funcionava com quickshell
+bind = , F, exec, slurp | xargs -I {} grim -g “{}” /tmp/ocr_image.png && tesseract /tmp/ocr_image.png stdout | wl-copy && rm /tmp/ocr_image.png
+- lens n funcionava com quickshell
+bind = , E, exec, slurp | xargs -I {} grim -g “{}” /tmp/region_lens.png && xdg-open ‘https://lens.google.com/upload’ && sleep 1 && wl-copy < /tmp/region_lens.png
+- vlc n da play/pause com atalho (ainda n da play pelo mpris) (184)
+p vlc in media play pause
+[removidos] -------------
+
+- sddm numa teela só  # [n funcionou]
+/usr/share/sddm/scripts/Xsetup - rotação
+
+nano ~/.config/user-dirs.dirs >>>>> XDG_PICTURES_DIR="$HOME/Pictures"
+- fullscrren print n salvava no lugar certo
+dots/.config/quickshell/ii/modules/ii/regionSelector/RegionSelection.qml
+- remove satty do region selection pra n quebrar (232-215)
+
+-------------------------
+- screenshot com qs so selecionava mas n funcionava
+scripts/record.sh
+- refactor... fix region record dont stop
+------------------------- [ainda tem problema com geometry]
+
+-------------------------
+keybinds.conf
+- bindl   =       , S, exec, bash -c "grim - | tee >(cliphist store) | wl-copy" # Screenshot -file (333)
+execs.conf
+- exec-once = wl-paste --watch cliphist store & (24)
+or
+keybinds.conf
+# bindl   =       , S, exec, bash -c 'MON=$(hyprctl monitors -j | jq -r ".[] | select(.focused) | .name"); hyprshot -m output -o "$MON" --clipboard-only --silent' # Screenshot -file
++standard exec.com
+-------------------------
+
+nano ~/.config/firejail/quickshell.profile
+- firejail: liberar clipboard pros prints # [n funcionou]
+

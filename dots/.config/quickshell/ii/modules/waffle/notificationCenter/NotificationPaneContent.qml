@@ -7,7 +7,7 @@ import qs.modules.common.widgets
 import qs.modules.common.functions
 import qs.modules.waffle.looks
 
-FooterRectangle {
+BodyRectangle {
     id: root
     anchors.fill: parent
     implicitHeight: 230
@@ -53,9 +53,10 @@ FooterRectangle {
             }
         }
 
-        WListView {
+        StyledListView {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            animateAppearance: false
             clip: true
 
             model: Notifications.appNameList

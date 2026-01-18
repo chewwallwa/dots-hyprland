@@ -86,7 +86,7 @@ WBarAttachedPanelContent {
                 id: searchBar
                 Layout.fillWidth: true
                 implicitWidth: 832 // TODO: Make sizes naturally inferred
-                horizontalPadding: 32
+                horizontalPadding: root.searching ? 24 : 32
                 // verticalPadding: root.searching ? 32 : 16 // TODO: make this not nuke the panel
                 Synchronizer on searching {
                     property alias target: root.searching

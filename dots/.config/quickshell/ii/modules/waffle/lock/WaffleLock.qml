@@ -36,34 +36,15 @@ LockScreen {
         Image {
             id: bg
             z: 0
-            width: parent.width
-            height: parent.height
-            onStatusChanged: {
-                if (status === Image.Ready) {
-                    print("Lock wallpaper loaded");
-                    print(lockSurfaceItem.height);
-                    y = -lockSurfaceItem.height;
-                    openAnim.restart();
-                }
-            }
+            anchors.fill: parent
             sourceSize: Qt.size(lockSurfaceItem.width, lockSurfaceItem.height)
             source: Config.options.background.wallpaperPath
             fillMode: Image.PreserveAspectCrop
-
-            PropertyAnimation {
-                id: openAnim
-                target: bg
-                property: "y"
-                to: 0
-                duration: 350
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: Looks.transition.easing.bezierCurve.easeIn
-            }
         }
 
         GaussianBlur {
             z: 1
-            anchors.fill: bg
+            anchors.fill: parent
             source: bg
             radius: 100
             samples: radius * 2 + 1
@@ -86,7 +67,7 @@ LockScreen {
         Interactables {
             id: interactables
             z: 2
-            anchors.fill: bg
+            anchors.fill: parent
         }
     }
 
@@ -102,31 +83,12 @@ LockScreen {
         // }
 
         function switchToFocusedView() {
-            switchToPasswordViewAnim.restart();
-        }
-
-        SequentialAnimation {
-            id: switchToPasswordViewAnim
-            PropertyAnimation {
-                target: unfocusedContent
-                property: "y"
-                from: 0
-                to: -height * 1.1
-                duration: 250
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: Looks.transition.easing.bezierCurve.easeIn
-            }
-            ScriptAction {
-                script: {
-                    root.passwordView = true;
-                }
-            }
+            root.passwordView = true;
         }
 
         Item {
             id: unfocusedContent
-            width: parent.width
-            height: parent.height
+            anchors.fill: parent
             visible: !root.passwordView
             ClockTextGroup {
                 anchors {
