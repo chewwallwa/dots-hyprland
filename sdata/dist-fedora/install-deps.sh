@@ -37,7 +37,7 @@ v sudo dnf install yq -y
 r v sudo dnf install @development-tools fedora-packager rpmdevtools fonts-rpm-macros qt6-rpm-macros -y
 
 # COPR repositories
-v sudo dnf copr enable ririko66z/dots-hyprland -y
+r v sudo dnf copr enable ririko66z/dots-hyprland -y
 v sudo dnf copr enable solopasha/hyprland -y
 v sudo dnf copr enable deltacopy/darkly -y
 v sudo dnf copr enable alternateved/eza -y
@@ -85,7 +85,7 @@ done < <(echo "$deps_data" | yq '
 ')
 
 # Add back versionlock at the end
-v sudo dnf versionlock add quickshell-git
+v sudo dnf versionlock add quickshell-git || true
 
 echo -e "\n========================================"
 echo "All installations are complete."
