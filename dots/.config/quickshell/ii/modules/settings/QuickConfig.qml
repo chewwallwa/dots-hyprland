@@ -218,6 +218,95 @@ ContentPage {
             ]
         }
 
+        ContentSubsection {
+            id: lightBgSection
+            title: Translation.tr("Light mode background")
+            tooltip: Translation.tr("Custom background color for light mode")
+
+            readonly property var hexColorRegex: /^#[0-9A-Fa-f]{6}$/
+
+            Process {
+                id: colorPickerProc
+                command: ["hyprpicker", "--no-fancy"]
+                running: false
+                stdout: SplitParser {
+                    onRead: data => {
+                        var color = data.trim();
+                        if (color.match(lightBgSection.hexColorRegex)) {
+                            lightBgColorField.text = color;
+                        } else if (color.length > 0) {
+                            console.warn("Invalid color format from hyprpicker:", color);
+                        }
+                    }
+                }
+            }
+
+            RowLayout {
+                spacing: 10
+                Layout.fillWidth: true
+
+                MaterialTextField {
+                    id: lightBgColorField
+                    Layout.fillWidth: true
+                    placeholderText: Translation.tr("Hex color (e.g., #F2E5BC)")
+                    text: Config.options.appearance.palette.lightBackgroundColor || "#F2E5BC"
+                    onTextChanged: {
+                        // Validate hex color format and update config only if valid
+                        if (text && text.match(lightBgSection.hexColorRegex)) {
+                            Config.options.appearance.palette.lightBackgroundColor = text;
+                            lightBgColorField.color = Appearance.colors.colOnLayer0; // Reset to normal color
+                        } else if (text && text.length > 0) {
+                            // Show visual feedback for invalid format
+                            lightBgColorField.color = Appearance.colors.colError;
+                        } else {
+                            // Empty field - reset to normal color (placeholder shown)
+                            lightBgColorField.color = Appearance.colors.colOnLayer0;
+                        }
+                    }
+                }
+
+                Rectangle {
+                    width: 40
+                    height: 40
+                    radius: Appearance.rounding.small
+                    // Only update preview when the config contains a valid color
+                    color: {
+                        var configColor = Config.options.appearance.palette.lightBackgroundColor;
+                        if (configColor && typeof configColor === 'string' && configColor.match(lightBgSection.hexColorRegex)) {
+                            return configColor;
+                        }
+                        return "#F2E5BC";
+                    }
+                    border.width: 1
+                    border.color: Appearance.colors.colOutline
+                }
+
+                RippleButtonWithIcon {
+                    buttonRadius: Appearance.rounding.small
+                    materialIcon: "colorize"
+                    mainText: Translation.tr("Pick")
+                    onClicked: {
+                        colorPickerProc.running = true;
+                    }
+                    StyledToolTip {
+                        text: Translation.tr("Use color picker")
+                    }
+                }
+
+                RippleButtonWithIcon {
+                    buttonRadius: Appearance.rounding.small
+                    materialIcon: "refresh"
+                    mainText: Translation.tr("Apply")
+                    onClicked: {
+                        Quickshell.execDetached(["bash", "-c", `${Directories.wallpaperSwitchScriptPath} --noswitch`]);
+                    }
+                    StyledToolTip {
+                        text: Translation.tr("Reapply colors with new background")
+                    }
+                }
+            }
+        }
+
         ConfigSwitch {
             buttonIcon: "ev_shadow"
             text: Translation.tr("Transparency")

@@ -2,6 +2,8 @@
 import argparse
 import math
 import json
+import sys
+import re
 from PIL import Image
 from materialyoucolor.quantize import QuantizeCelebi
 from materialyoucolor.score.score import Score
@@ -24,6 +26,7 @@ parser.add_argument('--harmonize_threshold', type=float , default=100, help='(0-
 parser.add_argument('--term_fg_boost', type=float , default=0.35, help='Make terminal foreground more different from the background')
 parser.add_argument('--blend_bg_fg', action='store_true', default=False, help='Shift terminal background or foreground towards accent')
 parser.add_argument('--cache', type=str, default=None, help='file path to store the generated color')
+parser.add_argument('--light_bg_color', type=str, default=None, help='Custom background color for light mode (hex format)')
 parser.add_argument('--debug', action='store_true', default=False, help='debug mode')
 args = parser.parse_args()
 
@@ -118,6 +121,18 @@ for color in vars(MaterialDynamicColors).keys():
     if hasattr(color_name, "get_hct"):
         rgba = color_name.get_hct(scheme).to_rgba()
         material_colors[color] = rgba_to_hex(rgba)
+
+# Override background color for light mode if custom color is provided
+if not darkmode and args.light_bg_color is not None:
+    # Validate and normalize the hex color format
+    color_str = args.light_bg_color.strip()
+    if not color_str.startswith('#'):
+        color_str = '#' + color_str
+    # Validate hex color format using regex
+    if re.match(r'^#[0-9A-Fa-f]{6}$', color_str):
+        material_colors['background'] = color_str.upper()
+    else:
+        print(f"Warning: Invalid light background color format '{args.light_bg_color}', skipping override", file=sys.stderr)
 
 # Extended material
 if darkmode == True:
